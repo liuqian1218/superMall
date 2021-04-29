@@ -3,12 +3,14 @@
       <nav-bar class="home-nav">
         <div slot = "center">蘑菇街</div>
       </nav-bar>
-      <home-swiper :banners = "banners"></home-swiper>
-      <home-rec-view :recommend = "recommend"></home-rec-view>
-      <feature-view/>
-      <tab-control :titles = "['流行','精选','新款']" class="tab-control"></tab-control>
-      <goods-list :goods = "goods['pop'].list"></goods-list>
-      
+
+      <scroll class="content">
+        <home-swiper :banners = "banners"></home-swiper>
+        <home-rec-view :recommend = "recommend"></home-rec-view>
+        <feature-view/>
+        <tab-control :titles = "['流行','精选','新款']" class="tab-control" @tabctrClick = "tabctrClick"></tab-control>
+        <goods-list :goods = "goods[curType].list"></goods-list>
+      </scroll>
   </div>
 </template>
 
@@ -17,6 +19,8 @@ import NavBar from 'components/common/navBar/NavBar'
 import homeSwiper from 'views/home/HomeChildren/homeSwiper'
 import homeRecView from 'views/home/HomeChildren/homeRecView'
 import FeatureView from './HomeChildren/FeatureView'
+
+import scroll from 'components/common/scroll/scroll'
 
 import TabControl from 'components/content/TabControl/TabControl'
 import GoodsList from 'components/content/goods/GoodsList'
@@ -36,6 +40,7 @@ export default {
       FeatureView,
       TabControl,
       GoodsList,
+      scroll,
     },
     data(){
       return {
@@ -46,6 +51,7 @@ export default {
           new :{ page : 0, list : [] },
           sell : { page : 0, list : [] },
         },
+        curType : "pop",
       }
     },
     created(){
@@ -58,6 +64,15 @@ export default {
       this.getHomeGoods("sell");
     },
     methods:{
+      //事件点击相关
+      tabctrClick(index){
+        switch(index){
+          case 0 : this.curType = 'pop' ; break;
+          case 1 : this.curType = "new" ; break;
+          case 2 : this.curType = "sell"; break;
+        }
+      },
+      //网络请求相关
       getHomeMultiData(){
         getHomeMultiData().then(res => {//这里的方法时从network里导入的
           // console.log(res.data);
@@ -68,16 +83,20 @@ export default {
       getHomeGoods(type){
         const page = this.goods[type].page + 1 ;
         getHomeGoods(type,page).then(res => {
-          console.log(res);
+          // console.log(res);
           this.goods[type].list.push(...res.data.list);
           this.goods[type].page += 1;
         })
-      }
+      },
+      
     },
 }
 </script>
 
-<style>
+<style scoped>
+  #home{
+    height:100vh;
+  }
   .home-nav{
     color:#fff;
     font-size:24px;
@@ -92,5 +111,9 @@ export default {
     position: sticky;
     top:44px;
     background-color: #fff;
+  }
+  .content{
+    height : calc(100% - 93px);
+    overflow: hidden;
   }
 </style>

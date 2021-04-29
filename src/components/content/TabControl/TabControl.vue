@@ -25,6 +25,7 @@ export default {
     methods:{
         itemClick(index){
             this.CurrentIndex = index ;
+            this.$emit("tabctrClick",index);
         },
     },
 }
