@@ -74,6 +74,7 @@ export default {
         showBack : false ,
         tabOffsetTop:0,
         isTabControlFixed:false,
+        saveY : 0,
       }
     },
     created(){
@@ -152,10 +153,11 @@ export default {
       
     },
     activated(){
-
+      this.$refs.scroll.scrollTo(0,this.saveY,0);
+      this.$refs.scroll.refresh();
     },
     deactivated(){
-      
+      this.saveY = this.$refs.scroll.getScrollY();
     },
 }
 </script>
@@ -169,10 +171,6 @@ export default {
     font-size:24px;
     font-weight: bold;
     background-color : var(--color-tint);
-
-    /* position:sticky;
-    top:0px;
-    z-index: 9; */
   }
   .content{
     height : calc(100% - 93px);

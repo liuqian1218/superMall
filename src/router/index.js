@@ -5,6 +5,7 @@ var Home = () => import("views/home/home.vue");
 var Cate = () => import("views/cate/cate.vue");
 var Cart = () => import("views/cart/cart.vue");
 var ProFile = () => import("views/profile/profile.vue");
+var Details = () => import("views/details/details.vue")
 
 Vue.use(Router)
 
@@ -29,6 +30,10 @@ var router = new Router({
     {
       path:'/profile',
       component:ProFile,
+    },
+    {
+      path:'/details/:iid',
+      component:Details,
     },
   ],
   mode : "history",
