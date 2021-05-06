@@ -9,7 +9,7 @@
           <span class="discount" :style = "{backgroundColor:baseInfo.discountBgColor}">{{baseInfo.discountDesc}}</span>
       </div>
       <div class="columns">
-          <span v-for= "item in baseInfo.columns" class="columns-item">{{item}}</span>
+          <span v-for= "item in baseInfo.columns">{{item}}</span>
       </div>
       <div class="services">
         <div v-for = "item in baseInfo.services" 
@@ -36,6 +36,7 @@ export default {
 <style scoped>
     .goods-base-info{
         padding : 15px 7px 10px ;
+        border-bottom:5px solid #f2f5f8;
     }
     .title{
         font-size : 16px;
@@ -57,7 +58,7 @@ export default {
     .discount{
         color:#fff;
         padding:2px;
-        border-radius: 50%;
+        border-radius: 8px;
         font-size:12px;
         position: relative;
         left : 5px;
@@ -65,20 +66,21 @@ export default {
     }
     .columns{
         display:flex;
-    }
-    .columns-item{
-        flex:1;
-        text-align: left;
+        color:#999;
+        border-bottom : solid #999 1px;
+        padding-bottom:5px;
+        justify-content: space-between;
         font-size: 14px;
     }
     .services{
         margin-top:10px;
         display: flex;
         flex-wrap: wrap;
+        justify-content: space-between;
+        padding : 10px 0 ;
     }
     .services-item{
         width:33%;
-        text-align: left;
         line-height: 20px;
         font-size: 14px;
     }

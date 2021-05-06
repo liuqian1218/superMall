@@ -3,6 +3,9 @@
         <detail-nav-bar></detail-nav-bar>
         <detail-swiper :top-imgs = "bannerImgs"></detail-swiper>
         <goods-base-info :base-info = "proBaseInfo"></goods-base-info>
+        <shop-base-info :shopInfo = "shop"></shop-base-info>
+
+        <div style="height:1000px"></div>
     </div>
 </template>
 
@@ -10,8 +13,9 @@
 import detailNavBar from './childComponent/detailNavBar'
 import detailSwiper from './childComponent/detailSwiper'
 import goodsBaseInfo from './childComponent/goodsBaseInfo'
+import shopBaseInfo from './childComponent/shopBaseInfo'
 
-import {getGoodsDetail} from 'network/detail'
+import {getGoodsDetail,Shop} from 'network/detail'
 
 export default {
     name : "Details",
@@ -19,7 +23,7 @@ export default {
         detailNavBar,
         detailSwiper,
         goodsBaseInfo,
-    
+        shopBaseInfo,
     },
     data(){
         return {
@@ -34,6 +38,7 @@ export default {
                 "discountBgColor" : "",
                 "services" : [],
             },
+            shop : {},
         }
     },
     created(){
@@ -46,17 +51,22 @@ export default {
         getGoodsDetail(iid){
             getGoodsDetail(iid).then(res => {
                 console.log(res);
+                var data = res.result;
                 //顶部轮播图
-                this.bannerImgs = res.result.itemInfo.topImages;
+                this.bannerImgs = data.itemInfo.topImages;
                 //商品基本信息
-                this.proBaseInfo.title = res.result.itemInfo.title;
-                this.proBaseInfo.price = res.result.itemInfo.price;
-                this.proBaseInfo.oldPrice = res.result.itemInfo.oldPrice;
-                this.proBaseInfo.discountDesc = res.result.itemInfo.discountDesc;
-                this.proBaseInfo.columns.push(...res.result.columns);
-                this.proBaseInfo.discountBgColor = res.result.itemInfo.discountBgColor;
-                this.proBaseInfo.services.push(...res.result.shopInfo.services);
-                console.log(this.proBaseInfo);
+                this.proBaseInfo.title = data.itemInfo.title;
+                this.proBaseInfo.price = data.itemInfo.price;
+                this.proBaseInfo.oldPrice = data.itemInfo.oldPrice;
+                this.proBaseInfo.discountDesc = data.itemInfo.discountDesc;
+                this.proBaseInfo.columns.push(...data.columns);
+                this.proBaseInfo.discountBgColor = data.itemInfo.discountBgColor;
+                this.proBaseInfo.services.push(...data.shopInfo.services);
+                //店铺基本信息
+                this.shop = new Shop(data.shopInfo);
+
+
+                console.log(this.shop);
             });
         },
     },
