@@ -1,7 +1,7 @@
 <template>
   <div class="goods-list-item" @click = "itemClick">
       <!-- <a :href = "goodsItem.link"> -->
-          <img :src="goodsItem.show.img" alt="" @load = "imgLoad">
+          <img :src="showImg" alt="" @load = "imgLoad">
           <div class="goods-info">
             <p>{{goodsItem.title}}</p>   
             <span class="price">￥{{goodsItem.price}}</span>
@@ -10,7 +10,7 @@
       <!-- </a> -->
   </div>
 </template>
-
+ 
 <script>
 export default {
     name : "GoodsListItem",
@@ -23,10 +23,24 @@ export default {
     methods:{
         imgLoad(){
             this.$bus.$emit("ItemImgLoad");
+            // if(this.$route.path.indexOf("/home") != -1){
+            //     this.$bus.$emit("homeItemImgLoad");
+            // }else if(this.$route.path.indexOf("/detail") != -1){
+            //     this.$bus.$emit("detailItemImgLoad");
+            // }
         },
         itemClick(){
-            this.$router.push("/details/" + this.goodsItem.iid);
+            if(this.goodsItem.item_id){
+                this.$router.push("/details/" + this.goodsItem.item_id);
+            }else{
+                this.$router.push("/details/" + this.goodsItem.iid);
+            }
         },
+    },
+    computed:{
+        showImg(){
+            return this.goodsItem.image || this.goodsItem.show.img;
+        }
     },
 }
 </script>

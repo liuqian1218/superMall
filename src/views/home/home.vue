@@ -40,14 +40,14 @@ import scroll from 'components/common/scroll/scroll'
 
 import TabControl from 'components/content/TabControl/TabControl'
 import GoodsList from 'components/content/goods/GoodsList'
-import backTop from 'components/content/backTop/backTop'
 
 import {
   getHomeMultiData,
   getHomeGoods
 } from 'network/home'
 
-import {debounce} from 'common/utils'
+// import {debounce} from 'common/utils'
+import{itemListenerMixin,backTopMix} from 'common/mixin'
 
 export default {
     name : "home",
@@ -59,7 +59,6 @@ export default {
       TabControl,
       GoodsList,
       scroll,
-      backTop,
     },
     data(){
       return {
@@ -71,12 +70,13 @@ export default {
           sell : { page : 0, list : [] },
         },
         curType : "pop",
-        showBack : false ,
         tabOffsetTop:0,
         isTabControlFixed:false,
         saveY : 0,
+        
       }
     },
+    mixins:[itemListenerMixin,backTopMix],
     created(){
       //请求首页多个数据
       this.getHomeMultiData();//加this调用的method里的方法
@@ -89,14 +89,11 @@ export default {
 
     },
     mounted(){
-      //频繁刷新防抖
-      var refresh = debounce(this.$refs.scroll.refresh,500)
-      //监听item中图片加载完成
-      this.$bus.$on("ItemImgLoad",() => {
-        refresh();
-      })
+      // //频繁刷新防抖
+      // this.itemImgListener = debounce(this.$refs.scroll.refresh,500)
+      // //监听item中图片加载完成
+      // this.$bus.$on("ItemImgLoad",this.itemImgListener)
 
-      // console.log(this.$refs.tabControl.$el.offsetTop);
     },
     methods:{
       //事件点击相关
@@ -110,14 +107,10 @@ export default {
         this.$refs.tabControl1.CurrentIndex = index ;
         this.$refs.tabControl2.CurrentIndex = index ;
       },
-      //回到顶部点击事件
-      backClick(){
-        this.$refs.scroll.scrollTo(0,0,500);
-      },
       //页面滚动事件
       contentScroll(position){
         //1、backtop是否显示
-        this.showBack = -(position.y) > 1000 ? true :false ;
+        this.listenBackTop(position);
 
         //2、tabcontrol是否吸顶
         this.isTabControlFixed = -(position.y) > this.tabOffsetTop?true:false;
@@ -157,7 +150,11 @@ export default {
       this.$refs.scroll.refresh();
     },
     deactivated(){
+      //获取页面高度
       this.saveY = this.$refs.scroll.getScrollY();
+
+      //取消事件总线
+      this.$bus.$off("ItemImgLoad",this.itemImgListener)
     },
 }
 </script>
