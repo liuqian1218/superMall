@@ -14,6 +14,7 @@
         </bscroll>
         <detail-bottom-bar @addToCart = "addToCart"></detail-bottom-bar>
         <back-top @click.native="backClick" v-show = "showBack"></back-top>
+        <!-- <toast :message="message" :show="show"></toast> -->
     </div>
 </template>
 
@@ -34,6 +35,8 @@ import{itemListenerMixin,backTopMix} from 'common/mixin'
 
 import bscroll from 'components/common/scroll/scroll'
 
+// import Toast from 'components/common/Toast/Toast'
+
 export default {
     name : "Details",
     components:{
@@ -47,6 +50,7 @@ export default {
         detailComment,
         GoodsList,
         detailBottomBar,
+        // Toast,
     },
     data(){
         return {
@@ -60,6 +64,8 @@ export default {
                 "columns" : [],
                 "discountBgColor" : "",
                 "services" : [],
+                "realPrice":"",
+                "desc":"",
             },
             shop : {},
             detailInfo : {},
@@ -68,6 +74,8 @@ export default {
             detailRec : [],
             themeTopYs : [],
             getThemeTopYs :null,
+            message:"",
+            show:false,
         }
     },
     mixins:[itemListenerMixin,backTopMix],
@@ -110,6 +118,7 @@ export default {
         },
         getGoodsDetail(iid){
             getGoodsDetail(iid).then(res => {
+                console.log(res);
                 var data = res.result;
                 //顶部轮播图
                 this.bannerImgs = data.itemInfo.topImages;
@@ -117,7 +126,9 @@ export default {
                 this.proBaseInfo.title = data.itemInfo.title;
                 this.proBaseInfo.price = data.itemInfo.price;
                 this.proBaseInfo.oldPrice = data.itemInfo.oldPrice;
+                this.proBaseInfo.realPrice = data.itemInfo.lowPrice;
                 this.proBaseInfo.discountDesc = data.itemInfo.discountDesc;
+                this.proBaseInfo.desc = data.itemInfo.desc;
                 this.proBaseInfo.columns.push(...data.columns);
                 this.proBaseInfo.discountBgColor = data.itemInfo.discountBgColor;
                 this.proBaseInfo.services.push(...data.shopInfo.services);
@@ -159,7 +170,21 @@ export default {
         },
         //加入购物车
         addToCart(){
-            
+            const product = {};
+            product.image = this.bannerImgs[0];
+            product.title = this.proBaseInfo.title;
+            product.desc = this.proBaseInfo.desc;
+            product.price = this.proBaseInfo.realPrice;
+            product.iid = this.iid ;
+            this.$store.dispatch("addCart",product).then((res) => {
+                // this.message = res;
+                // this.show = true;
+                // setTimeout(() =>{
+                //     this.message = "";
+                //     this.show = false;
+                // },1500);
+                this.$toast.show(res,1500);
+            });
         },
     },
 }
